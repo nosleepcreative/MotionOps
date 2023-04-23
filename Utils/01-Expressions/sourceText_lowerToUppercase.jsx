@@ -1,21 +1,26 @@
+// Get input string and its length
 var str = value;
-var strLength = value.length;
+var strLength = str.length;
 
+// Get effect controls
 var cb = effect("upperToLower")("Checkbox");
 var pct = effect("Range Control (%)")("Slider");
-var myCharRange = linear(pct % 100, 0, 100, 0, strLength) + Math.floor(pct / 100) * strLength;
-// var myCharRange = Math.ceil(effect("Range Control")("Slider")); // using character index
 
-// main
-for (i = 0; i < myCharRange; i++) {
-    var curChar = str.charAt(i % strLength); // get current character
-    var curMod = Math.ceil((i + 1) / strLength) - 1; // counter value for upper/lower case
+// Calculate range of characters to modify
+var pctNormalized = pct % 100;
+var pctRangeStart = Math.floor(pct / 100) * strLength;
+var pctRangeEnd = linear(pctNormalized, 0, 100, 0, strLength);
+var myCharRange = Math.ceil(pctRangeStart + pctRangeEnd);
 
-    // odd - lowercase, even - uppercase
-    if (curMod % 2 == 0) newChar = cb == 0 ? curChar.toUpperCase() : curChar.toLowerCase();
-    else newChar = cb == 0 ? curChar.toLowerCase() : curChar.toUpperCase();
+// Modify characters within range
+for (var i = 0; i < myCharRange; i++) {
+  var charIndex = i % strLength;
+  var curChar = str.charAt(charIndex);
+  var isUpper = (Math.ceil((i + 1) / strLength) - 1) % 2 === 0;
+  var newChar = isUpper ? (cb ? curChar.toLowerCase() : curChar.toUpperCase()) :
+                          (cb ? curChar.toUpperCase() : curChar.toLowerCase());
+  str = str.substr(0, charIndex) + newChar + str.substr(charIndex + 1);
+}
 
-    // replace character
-    str = str.replace(curChar, newChar);
-};
+// Return modified string
 str

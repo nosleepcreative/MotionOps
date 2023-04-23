@@ -1,3 +1,4 @@
+// this deletes all layers
 for(var i = app.project.activeItem.numLayers; i>0; i--){
     app.project.activeItem.layer(i).remove();
 } // Remove all layers
